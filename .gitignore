@@ -1,0 +1,6 @@
+/node_modules
+temp_auto_push.bat
+/src/generated/prisma
+.gitignore
+temp_interactive_push.bat
+config.bat

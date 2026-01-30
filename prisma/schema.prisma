@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  fullName   String
+  email      String     @unique
+  dob        String     // Sequelize was using DATEONLY, maps well to String "YYYY-MM-DD"
+  password   String?
+  role       Role       @default(user)
+  otp        String?
+  otpExpiry  DateTime?
+  isVerified Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  otpTokens  OtpToken[]
+
+  @@map("Users") // Matching Sequelize default naming if needed, though Sequelize usually uses "Users"
+}
+
+model OtpToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  otp       String
+  expiry    DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("OtpTokens")
+}
